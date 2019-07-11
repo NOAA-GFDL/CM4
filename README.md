@@ -7,7 +7,7 @@ The layout of this package includes the following directories:
 * src - The source code for the AM4 model
 * exec - The build directory with Makefiles for building the model executable
 * run - Sample run script
-* analysis - Sample analysis scripts 
+# * analysis - Sample analysis scripts 
 
 ## Cloning Instructions
 
@@ -61,7 +61,7 @@ The following components are available in the
 * [FMS](https://github.com/NOAA-GFDL/FMS) (as [shared](src/shared))
 * [mocsy](https://github.com/NOAA-GFDL/mocsy)
 
-## Building AM4
+## Building CM4
 
 The [exec](exec) directory contains Makefiles that can be used to
 build the CM4 executable.  These Makefiles were generated using the
@@ -95,20 +95,20 @@ found in the [intel.mk](exec/templates/intel.mk) file.
 ## Running CM4
 
 Included in the run directory is a sample run script for reference.
-To run the CM4 sample experiment, first download the data file
-mentioned in [Obtaining the Input data](#obtaining-the-input-data)
-section.  Modify the variables in the configuration section in the
-sample run script, and then run the script.
+#To run the CM4 sample experiment, first download the data file
+#mentioned in [Obtaining the Input data](#obtaining-the-input-data)
+#section.  Modify the variables in the configuration section in the
+#sample run script, and then run the script.
+#
+#The sample data and run script are configured to run on 
+#processors.  To run on a different number of processors, or modify the
+#experiment, refer to the `README.CM4_run` file included in the CM4
+#data tarball.
 
-The sample data and run script are configured to run on 
-processors.  To run on a different number of processors, or modify the
-experiment, refer to the `README.CM4_run` file included in the CM4
-data tarball.
-
-Note: The `input.nml` file (found in the CM4 data tarball) contains
-Fortran namelists and namelist variables that modify, at run time, the
-model.  To learn more about the settings in the `input.nml` file,
-please refer to source code where the namelist/variable are defined.
+#Note: The `input.nml` file (found in the CM4 data tarball) contains
+#Fortran namelists and namelist variables that modify, at run time, the
+#model.  To learn more about the settings in the `input.nml` file,
+#please refer to source code where the namelist/variable are defined.
 
 
 Please direct your questions and feedback to
