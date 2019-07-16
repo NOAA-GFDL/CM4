@@ -4,7 +4,7 @@
 
 The layout of this package includes the following directories:
 
-* src - The source code for the AM4 model
+* src - The source code for the CM4 model
 * exec - The build directory with Makefiles for building the model executable
 * run - Sample run script
 
@@ -26,7 +26,7 @@ using the `--recursive` option, the following step must be taken to
 obtain all sources:
 
 ```
-# From within the AM4 parent directory
+# From within the CM4 parent directory
 git submodule update --init --recursive
 ```
 
@@ -91,10 +91,45 @@ will replace -msse with -xhost and -O3 with -O2.  The three options for
 All of the make line options can be
 found in the [intel.mk](exec/templates/intel.mk) file.
 
+## Obtaining the input data
+
+The input data required for running the CM4 model can be found on
+[GFDL's data
+portal](http://data1.gfdl.noaa.gov/nomads/forms/cm4/) .
+
+The file `CM4_runDir.tar.gz` contains a configured run directory to run a
+sample experiment of the CM4 model.  Included in the tar file is a
+README.CM4 with more instructions on how to configure the CM4 run
+directory.
+
 ## Running CM4
 
 Included in the run directory is a sample run script for reference.
+To run the CM4 sample experiment, first download the data file
+mentioned in [Obtaining the Input data](#obtaining-the-input-data)
+section.  Modify the variables in the configuration section in the
+sample run script, and then run the script.
 
+The sample data and run script are configured to run on a total of 8127
+processors (864 cores 4 threads for the atmosphere and 4671 ocean cores).  
+To run on a different number of processors, or modify the
+experiment, refer to the `README.CM4` file included in the CM4
+data tarball.
+
+Note: The `input.nml` file (found in the CM4 data tarball) contains
+Fortran namelists and namelist variables that modify, at run time, the
+model.  To learn more about the settings in the `input.nml` file,
+please refer to source code where the namelist/variable are defined.
+
+
+## Model output and Other References
+
+Please refer to the [CM4 data and code
+site](http://data1.gfdl.noaa.gov/nomads/forms/cm4/) for details
+about where to find model and OBS data used in the papers.
+
+For all analysis figures and pertaining data, please use the CM4
+documentation papers as the original reference.
 
 Please direct your questions and feedback to
 gfdl.climate.model.info@noaa.gov
