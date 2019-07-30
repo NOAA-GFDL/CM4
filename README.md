@@ -53,6 +53,7 @@ The following components are available in the
 
 * [MOM6](https://github.com/NOAA-GFDL/MOM6)
 * [SIS2](https://github.com/NOAA-GFDL/SIS2)
+* [GFDL_atmos_cubed_sphere](https://github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere/tree/AM4.0) (as [atmos_cubed_sphere](src/atmos_cubed_sphere))
 * [icebergs](https://github.com/NOAA-GFDL/icebergs)
 * [ice_param](https://github.com/NOAA-GFDL/ice_param)
 * [ocean_BGC](https://github.com/NOAA-GFDL/ocean_BGC)
