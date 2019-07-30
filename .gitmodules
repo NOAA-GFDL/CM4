@@ -22,3 +22,6 @@
 [submodule "src/MOM6"]
 	path = src/MOM6
 	url = https://github.com/NOAA-GFDL/MOM6.git
+[submodule "src/atmos_cubed_sphere"]
+	path = src/atmos_cubed_sphere
+	url = https://github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere.git
