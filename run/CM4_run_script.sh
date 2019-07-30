@@ -32,9 +32,9 @@ executable=/path/to/executable/fms_CM4p0.x
 # atm_ranks is the number of cores to run the atmosphere on, omp_threads is the number of
 # openMP threads, ocean_ranks is the number of cores to run the ocean on.
 # You should not try to run the ocean with openmp
-atm_ranks=1152
+atm_ranks=864
 omp_threads=2
-ocean_ranks=5791
+ocean_ranks=4671
 
 # End of configuration section
 # ***********************************************************************
