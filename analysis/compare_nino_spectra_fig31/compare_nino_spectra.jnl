@@ -1,0 +1,68 @@
+\can mode verify
+! Usage: go compare_nino_spectra [idx idx_title hspec print_opt rebuild]
+!                                [ $1     $2      $3      $4       $5  ]
+
+def sym idx "$1%nino3%"
+def sym idx_title "$2%NINO3%"
+def sym hspec $3"0:3.5:.5"
+def sym print_opt $4"0"
+let rebuild = $5"0"
+
+can dat/all
+use "/home/atw/data/reynolds/v5/noaa.ersst/sst.nc"
+use "`diag_basedir`/`run_hist_1`/atw_atmos_ts_monthly/index/wavelet/1850_2014/solo/wavelet_density/tropical_pacific/nc/t_surf_($idx).nc"
+use "`diag_basedir`/`run_hist_2`/atw_atmos_ts_monthly/index/wavelet/1850_2014/solo/wavelet_density/tropical_pacific/nc/t_surf_($idx).nc"
+use "`diag_basedir`/`run_hist_3`/atw_atmos_ts_monthly/index/wavelet/1850_2014/solo/wavelet_density/tropical_pacific/nc/t_surf_($idx).nc"
+use "`diag_basedir`/`run_pictrl`/atw_atmos_ts_monthly/index/wavelet/0051_0650/solo/wavelet_density/tropical_pacific/nc/t_surf_($idx).nc"
+use "`diag_basedir`/`run_onepct_2x`/atw_atmos_ts_monthly/index/wavelet/0001_0150/solo/wavelet_density/tropical_pacific/nc/t_surf_($idx).nc"
+use "`diag_basedir`/`run_abrupt_4x`/atw_atmos_ts_monthly/index/wavelet/0001_0150/solo/wavelet_density/tropical_pacific/nc/t_surf_($idx).nc"
+
+go def_averages
+def sym obs_yr1 1880
+def sym obs_yr2 2014
+def sym obs_yr2p1 `($obs_yr2)+1,zw=4`
+def sym obs_nmon = `12*(($obs_yr2p1)-($obs_yr1))`
+
+def sym pictl_yr1 0151
+def sym pictl_yr2 0650
+def sym pictl_yr2p1 `($pictl_yr2)+1,zw=4`
+def sym pictl_nmon = `12*(($pictl_yr2p1)-($pictl_yr1))`
+
+def sym future_yr1 0051
+def sym future_yr2 0150
+def sym future_yr2p1 `($future_yr2)+1,zw=4`
+def sym future_nmon = `12*(($future_yr2p1)-($future_yr1))`
+
+def ax/t=1-jan-($obs_yr1):1-jan-($obs_yr2p1)/np=($obs_nmon)/unit=years/edge/cal=gregorian tax_obs
+def ax/t=1-jan-($obs_yr1):1-jan-($obs_yr2p1)/np=($obs_nmon)/unit=years/edge/cal=noleap tax_hist
+def ax/t=1-jan-($pictl_yr1):1-jan-($pictl_yr2p1)/np=($pictl_nmon)/unit=years/edge/cal=noleap tax_pictl
+def ax/t=1-jan-($future_yr1):1-jan-($future_yr2p1)/np=($future_nmon)/unit=years/edge/cal=noleap tax_future
+let/title="ERSST.v5 obs (($obs_yr1)-($obs_yr2))"/unit="K" ts_obs = sst[d=1,($($idx)),gt=tax_obs]
+let/title="CM4.0 Historical (3 members, ($obs_yr1)-($obs_yr2))"/unit="K" ts_h1 = tseries[d=2,gt=tax_hist]
+let/title="none"/unit="K" ts_h2 = tseries[d=3,gt=tax_hist]
+let/title="none"/unit="K" ts_h3 = tseries[d=4,gt=tax_hist]
+!let/title="CM4.0 piControl (0051-0650)"/unit="K" ts_pi = tseries[d=5]
+let/title="CM4.0 piControl (($pictl_yr1)-($pictl_yr2))"/unit="K" ts_pi = tseries[d=5,gt=tax_pictl]
+let/title="CM4.0 2xCO2 (($future_yr1)-($future_yr2))"/unit="K" ts_2x = tseries[d=6,gt=tax_future]
+let/title="CM4.0 4xCO2 (($future_yr1)-($future_yr2))"/unit="K" ts_4x = tseries[d=7,gt=tax_future]
+
+go setup_window ($print_opt) .4 .7
+def sym spacing "0:0 .13:.05:.14:.12"
+go panel 1 1 1 ($spacing); go magnify
+
+IF `"($PROGRAM_NAME)" EQ "PyFerret"` THEN
+   set text/font=Arial
+ENDIF
+
+let sm_lquals = "/line="+{"4","1",,,,,}+"/dash=(.01,.03,.01,.03)"
+
+!go compare_spectra ts_pi:ts_obs:ts_h1:ts_h2:ts_h3:ts_2x:ts_4x ($hspec) "plot/line" `rebuild` "5 40 4.d0 .true." "12+{4,1,3,,,5,2}" ($idx)_wavelet_ `1.1*fs` " " " " "ppl xfor (f3.1)" 0 " " 1 0 "{1,1,3,0,0,1,1}" "{360,360,0,0,0,0,0}" sm_lquals "{"/pal=blue70","/pal=gray80",,,,,}"
+
+go compare_spectra ts_pi:ts_obs:ts_h1:ts_h2:ts_h3 ($hspec) "plot/line" `rebuild` "6 40 4.d0 .true." "{16,13,8,8,8}" ($idx)_wavelet_ `1.1*fs` " " " " "ppl xfor (f3.1)" 0 " " 1 0 "{1,1,1,1,1}" "{360,360,0,0,0}" sm_lquals "{"/pal=blue70","/pal=gray80",,,}" .25:.75
+
+go label_nu 1 1 2 0 `1*fs` "@ASfilled bands are interquartile ranges of 30-year spectra" 2
+go label_nu .5 1.07 0 0 .3 "@p7($idx_title) SST spectra"
+
+go finish_window ($print_opt) compare_($idx)_spectra " " " " 4
+
+set mode/last verify
