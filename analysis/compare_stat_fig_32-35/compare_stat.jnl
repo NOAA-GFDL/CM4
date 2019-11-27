@@ -1,0 +1,95 @@
+\can mode verify
+! Usage: go compare_stat [varfile slev clev print_opt]
+!                        [  $1     $2   $3      $4   ]
+!
+! atw 2018aug1
+
+let varfile = "$1%atw_atmos_ts_monthly/sfc_ocean/tropics/1980_2014/vs_era_interim_1980_2014/g1x1/clim/all/nc/t_surf.nc%"
+def sym slev "$2%/lev=(-inf)(-2.5,2.5,.25)(inf)/pal=($pal_posneg)%"
+def sym clev "$3%/lev=(-8,8,.5,1)%"
+def sym print_opt $4"0"
+
+! let pcom = "fill"
+ let pcom = "shade"
+let fs = .2
+
+can dat/all
+use "`diag_basedir`/`run_hist_1`/`varfile`"
+use "`diag_basedir`/`run_hist_2`/`varfile`"
+use "`diag_basedir`/`run_hist_3`/`varfile`"
+
+let obs = a[d=1]
+let model = (b[d=1] + b[d=2] + b[d=3])/3
+let bias = model - obs
+
+go compare2_2d XY obs model none " " "title1" "title2" slev clev 
+
+
+
+def sym c0b go shakey_nu 1.035 0 .03 1 1 `.8*fs` 2\; ppl shade\; shade/ov/nolab/pal=gray IFV pvar THEN 1/0 ELSE 1\; IF \`pcom NE "shade"\` THEN\; \`pcom\`/ov/nolab(\$slev) pvar\; ENDIF\; contour/ov/nolab/si=`.8*fs`(\$clev) pvar
+def sym c0c go label_nu 0 1 -1 0 `1.2*fs` "@c007(\$ltxt)" -4\; ppl shaset reset
+
+def sym c1 go pgrid_inc\; shade/set/nolab/hl=25:385:60/vl=-20:20:5(\$slev) pvar\; go set_plot_sizes `fs`\; ppl axlint 1 2\; ppl axnmtc 5 4\; (\$c0b)\; go my_land gray\; plot/ov/nolab/vs/line/col=1 {-720,720,,180,180},{0,0,,-90,90}\; plot/ov/nolab/vs/line/col=6/dash 360+{-150,-90,-90,-150,-150},{-5,-5,5,5,-5}\; (\$c0c)
+
+go pgrid_def "go panel 4 2" "($spacing); go magnify"
+
+let pvar = bias
+def sym ltxt "(a) Sea surface temperature (#C)"
+def sym slev "/lev=(-inf)(-2.5,2.5,.25)(inf)/pal=($pal_posneg)"
+def sym clev "/lev=(-8,8,.5,1)"
+let varfile = "atw_atmos_ts_monthly/sfc_ocean/tropics/1980_2014/vs_era_interim_1980_2014/g1x1/clim/all/nc/t_surf.nc"
+($c0); ($c1) 
+
+def sym ltxt "(b) Net surface heat flux (W m^-^2)"
+let varfile = "atw_atmos_ts_monthly/sfc_ocean/tropics/1980_2014/vs_era_interim_1980_2014/g1x1/clim/all/nc/netflx.nc"
+def sym slev "/lev=(-inf)(-60,60,5)(inf)/pal=($pal_posneg)"
+def sym clev "/lev=(-200,200,10,-1)"
+($c0); ($c1)
+
+def sym ltxt "(c) Depth (m) of 0.5#C below SST"
+let varfile = "atw_ocean_av_annual/subsfc_ocean/tropics/1980_2014/vs_oras4_orca1_era_interim_1980_2014/g1x1/clim/all/nc/ild_0p5.nc"
+def sym slev "/lev=(-inf)(-40,40,5)(inf)/pal=($pal_posneg)"
+def sym clev "/lev=(-80,80,10,-1)"
+($c0); ($c1)
+
+let pvar = 10*bias
+def sym ltxt "(d) Zonal surface wind stress (cPa)"
+def sym slev "/lev=(-inf)(-2.5,2.5,.25)(inf)/pal=($pal_posneg)"
+def sym clev "/lev=(-6,6,.5,1)"
+let varfile = "atw_atmos_ts_monthly/sfc_ocean/tropics/1980_2014/vs_era_interim_1980_2014/g1x1/clim/all/nc/tau_x.nc"
+($c0); ($c1)
+let pvar = bias
+
+def sym ltxt "(e) Temperature (#C) of top 300 m of ocean"
+let varfile = "atw_ocean_av_annual/subsfc_ocean/tropics/1980_2014/vs_oras4_orca1_era_interim_1980_2014/g1x1/clim/all/nc/temp_zav.nc"
+def sym slev "/lev=(-inf)(-4,4,.5)(inf)/pal=($pal_posneg)"
+def sym clev "/lev=(-10,10,1,-1)"
+($c0); ($c1)
+
+def sym ltxt "(f) Rainfall (mm day^-^1)"
+let varfile = "atw_atmos_ts_monthly/sfc_ocean/tropics/1980_2014/vs_gpcp_v2p3_1980_2014/g1x1/clim/all/nc/precip.nc"
+def sym slev "/lev=(-inf)(-5,5,.5)(inf)/pal=($pal_precip_posneg)"
+def sym clev "/lev=(-10,10,1,-1)"
+($c0); ($c1)
+
+
+def sym c1 go pgrid_inc\; shade/set/nolab/hl=25:385:60/vl=0:250:50(\$slev) pvar\; go set_plot_sizes `fs`\; ppl axlint 1 1\; ppl axnmtc 5 4\; ppl ylab "depth (m)"\; (\$c0b)\; plot/ov/nolab/vs/line/col=1 {180,180},{0,300}\; plot/ov/nolab/vs/line/col=6/dash {`360-150`,`360-150`,,`360-90`,`360-90`},{0,300,,0,300}\; (\$c0c)
+
+def sym ltxt "(g) Equatorial subsurface temperature (#C)"
+let varfile = "atw_ocean_av_annual/subsfc_ocean/tropics/1980_2014/vs_oras4_orca1_era_interim_1980_2014/g1x1/clim/all/nc/temp_eq.nc"
+def sym slev "/lev=(-inf)(-4,4,.5)(inf)/pal=($pal_posneg)"
+def sym clev "/lev=(-8,8,1,-1)"
+($c0); ($c1)
+
+def sym ltxt "(h) Equatorial subsurface salinity (psu)"
+let varfile = "atw_ocean_av_annual/subsfc_ocean/tropics/1980_2014/vs_oras4_orca1_era_interim_1980_2014/g1x1/clim/all/nc/salt_eq.nc"
+def sym slev "/lev=(-inf)(-1,1,.1)(inf)/pal=($pal_salinity_posneg)"
+def sym clev "/lev=(-2,2,.2,1)"
+($c0); ($c1)
+
+go finish_window ($print_opt) bias_annmean " " " " 4
+
+can dat/all
+go pgrid_clr
+go restore_plot_defaults
+
