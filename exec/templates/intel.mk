@@ -5,10 +5,10 @@
 
 ############
 # Command Macros
-FC = ftn
-CC = cc
-CXX = cc
-LD = ftn
+FC = mpiifort
+CC = mpiicc
+CXX = mpiicc
+LD = mpiifort
 
 #######################
 # Build target macros
@@ -193,6 +193,9 @@ ifndef MKL_LIBS
 LIBS += -lmkl_blas95_lp64 -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_intel_thread -lmkl_core 
 else
 LIBS += $(MKL_LIBS)
+endif
+ifdef HDF5_INCLUDE
+FPPFLAGS += -I$(HDF5_INCLUDE)
 endif
 
 # Get compile flags based on target macros.
