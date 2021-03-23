@@ -22,6 +22,15 @@
 [submodule "src/MOM6"]
 	path = src/MOM6
 	url = https://github.com/NOAA-GFDL/MOM6.git
-[submodule "src/atmos_cubed_sphere"]
-	path = src/atmos_cubed_sphere
+[submodule "src/atmos_phys"]
+	path = src/atmos_phys
+	url = https://github.com/NOAA-GFDL/atmos_phys.git
+[submodule "src/atmos_drivers"]
+	path = src/atmos_drivers
+	url = https://github.com/NOAA-GFDL/atmos_drivers.git
+[submodule "src/GFDL_atmos_cubed_sphere"]
+	path = src/GFDL_atmos_cubed_sphere
 	url = https://github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere.git
+[submodule "src/land_lad2"]
+	path = src/land_lad2
+	url = https://github.com/NOAA-GFDL/lm4.git
