@@ -77,21 +77,26 @@ additional settings that can be modified during the build.
 To run the default build (-O3 -msse2), go to the exec directory and
 enter the command
 ```
-make
+make HDF_INCLUDE=-I/path/to/hdf5/include
 ```
+Where */path/to/hdf5/include* is the path to your HDF5 include folder where hdf5.mod
+is. 
+
 If you would like to change some of the compiler options, there are several different
 options to add to the make command.  For example
 ```
-make ISA=-xhost BLD_TYPE=REPRO
+make ISA=-xhost REPRO=on
 ```
 will replace -msse with -xhost and -O3 with -O2.  The three options for 
-`BLD_TYPE` are  
-`PROD` (-O3)  
-`REPRO` (-O2)    
-`DEBUG` (-O0 and other traps)  
+building are  
+`PROD=on` (-O3) Default
+`REPRO=on` (-O2)    
+`DEBUG=on` (-O0 and other traps)  
 All of the make line options can be
 found in the [intel.mk](exec/templates/intel.mk) file.
 
+To build with GNU compilers, add `gcc=on` to the `make` line. The make line
+options can be found in the [gnu.mk](exec/templates/gnu.mk) file.
 ## Obtaining the input data
 
 The input data required for running the CM4 model can be found on
