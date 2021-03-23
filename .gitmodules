@@ -25,3 +25,6 @@
 [submodule "src/atmos_cubed_sphere"]
 	path = src/atmos_cubed_sphere
 	url = https://github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere.git
+[submodule "src/atmos_phys"]
+	path = src/atmos_phys
+	url = https://github.com/NOAA-GFDL/atmos_phys.git
