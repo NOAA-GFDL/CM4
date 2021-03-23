@@ -31,3 +31,6 @@
 [submodule "src/GFDL_atmos_cubed_sphere"]
 	path = src/GFDL_atmos_cubed_sphere
 	url = https://github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere.git
+[submodule "src/land_lad2"]
+	path = src/land_lad2
+	url = https://github.com/NOAA-GFDL/lm4.git
