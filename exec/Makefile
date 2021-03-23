@@ -1,68 +1,64 @@
-# Makefile for Experiment 'cm4p12_warsaw'
+# Makefile for CM4
 
 BUILDROOT = $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
-SRCROOT = $(abspath $(BUILDROOT)../src)/ # Final '/' added to denote directory
 
-MK_TEMPLATE = $(BUILDROOT)templates/intel.mk
+SRCROOT = $(abspath $(BUILDROOT)../src)/ 
 
-# Override default compile options. See templates/intel.mk for more compile options.
-# BLD_TYPE configures the type of build, PROD (production), REPRO (regression) or
-# DEBUG (debug options)
-BLD_TYPE = PROD
-OPENMP = t # Build with OpenMP enabled
+#MK_TEMPLATE = $(BUILDROOT)templates/intel.mk
+ifeq ($(gcc),on)
+  MK_TEMPLATE = $(BUILDROOT)templates/gnu.mk
+else
+  MK_TEMPLATE = $(BUILDROOT)templates/intel.mk
+endif
+ifeq ($(SH),sh)
+  SHELL=/bin/sh
+endif
 
 include $(MK_TEMPLATE)
 
 SUBMAKEFLAGS = BUILDROOT=$(BUILDROOT) SRCROOT=$(SRCROOT) MK_TEMPLATE=$(MK_TEMPLATE) BLD_TYPE=$(BLD_TYPE)
 
-fms_CM4p0.x: coupler/libcoupler.a sis2/libsis2.a atmos_dyn/libatmos_dyn.a land_lad2/libland_lad2.a atmos_phys/libatmos_phys.a mom6/libmom6.a icebergs/libicebergs.a fms/libfms.a
-	$(LD) $^ $(LDFLAGS) -o $@ $(STATIC_LIBS)
+cm4.x: coupler/libcoupler.a atmos_dyn/libatmos_dyn.a sis2/libsis2.a atmos_cubed_sphere/libatmos_cubed_sphere.a mom6/libmom6.a icebergs/libicebergs.a land_lad2/libland_lad2.a atmos_phys/libatmos_phys.a fms/libfms.a
+	$(LD) $^ $(LDFLAGS) -o $@  $(STATIC_LIBS)
 
 fms/libfms.a:  FORCE
-	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)fms $(@F)
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP)  --directory=fms $(@F) 
+
+coupler/libcoupler.a: atmos_dyn/libatmos_dyn.a sis2/libsis2.a atmos_cubed_sphere/libatmos_cubed_sphere.a mom6/libmom6.a icebergs/libicebergs.a land_lad2/libland_lad2.a atmos_phys/libatmos_phys.a fms/libfms.a FORCE
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP)  --directory=coupler $(@F)
 
 atmos_phys/libatmos_phys.a: fms/libfms.a FORCE
-	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)atmos_phys $(@F)
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP)  --directory=atmos_phys $(@F) 
 
-atmos_dyn/libatmos_dyn.a: atmos_phys/libatmos_phys.a fms/libfms.a FORCE
-	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)atmos_dyn $(@F)
+atmos_cubed_sphere/libatmos_cubed_sphere.a: atmos_phys/libatmos_phys.a fms/libfms.a FORCE
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)atmos_cubed_sphere $(@F)
 
-sis2/libsis2.a: icebergs/libicebergs.a mom6/libmom6.a fms/libfms.a FORCE
-	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)sis2 $(@F)
-
-icebergs/libicebergs.a: fms/libfms.a FORCE
-	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)icebergs $(@F)
+atmos_dyn/libatmos_dyn.a: atmos_cubed_sphere/libatmos_cubed_sphere.a atmos_phys/libatmos_phys.a fms/libfms.a FORCE
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP)  --directory=atmos_dyn $(@F) 
 
 land_lad2/libland_lad2.a: fms/libfms.a FORCE
-	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)land_lad2 $(@F)
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP)  --directory=land_lad2 $(@F) 
 
-# MOM6 is currently unable to run with OpenMP enabled
 mom6/libmom6.a: fms/libfms.a FORCE
-	$(MAKE) $(SUBMAKEFLAGS) --directory=$(BUILDROOT)mom6 $(@F)
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) OPENMP="" --directory=mom6 $(@F) 
 
-coupler/libcoupler.a: atmos_dyn/libatmos_dyn.a sis2/libsis2.a atmos_phys/libatmos_phys.a mom6/libmom6.a land_lad2/libland_lad2.a icebergs/libicebergs.a fms/libfms.a FORCE
-	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP) --directory=$(BUILDROOT)coupler $(@F)
+sis2/libsis2.a: icebergs/libicebergs.a mom6/libmom6.a fms/libfms.a FORCE
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP)  --directory=sis2 $(@F) 
+
+icebergs/libicebergs.a: fms/libfms.a FORCE
+	$(MAKE) $(SUBMAKEFLAGS) OPENMP=$(OPENMP)  --directory=icebergs $(@F) 
 
 FORCE:
 
 clean:
-	echo fms
-	$(MAKE) --directory=$(BUILDROOT)fms clean
-	echo atmos_phys
-	$(MAKE) --directory=$(BUILDROOT)atmos_phys clean
-	echo atmos_dyn
-	$(MAKE) --directory=$(BUILDROOT)atmos_dyn clean
-	echo sis2
-	$(MAKE) --directory=$(BUILDROOT)sis2 clean
-	echo land_lad2
-	$(MAKE) --directory=$(BUILDROOT)land_lad2 clean
-	echo icebergs
-	$(MAKE) --directory=$(BUILDROOT)icebergs clean
-	echo mom6
-	$(MAKE) --directory=$(BUILDROOT)mom6 clean
-	echo coupler
-	$(MAKE) --directory=$(BUILDROOT)coupler clean
-
+	$(MAKE) --directory=fms clean
+	$(MAKE) --directory=atmos_phys clean
+	$(MAKE) --directory=atmos_dyn clean
+	$(MAKE) --directory=atmos_cubed_sphere clean
+	$(MAKE) --directory=land_lad2 clean
+	$(MAKE) --directory=mom6 clean
+	$(MAKE) --directory=sis2 clean
+	$(MAKE) --directory=icebergs clean
+	$(MAKE) --directory=coupler clean
 clean_all: clean
 	$(RM) *.x
-
