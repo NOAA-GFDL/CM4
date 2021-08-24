@@ -101,10 +101,11 @@ ENV LIBRARY_PATH=${LD_LIBRARY_PATH}
 
 ## Build the model
 RUN mkdir -p /opt/CM4
-RUN git clone --recursive https://github.com/NOAA-GFDL/CM4.git -b 2021.02 \
+RUN git clone --recursive https://github.com/NOAA-GFDL/CM4.git -b 2021.03 \
  && cd CM4/exec \
  && make HDF_INCLUDE=-I/opt/hdf5/include HDF_LIBS="-L/opt/hdf5/lib -lhdf5 -lhdf5_fortran -lhdf5_hl -lhdf5hl_fortran" SH=sh \
  && cp cm4.x /opt/CM4 \
+ && cp -r fms /opt \
  && make clean_all
 
 ##############################################################################################################
@@ -118,6 +119,8 @@ COPY --from=builder /opt/CM4 /opt/CM4
 ENV PATH=/opt/CM4:/opt/netcdf-fortran/bin:/opt/netcdf-c/bin:${PATH}
 ENV LD_LIBRARY_PATH=/opt/netcdf-c/lib:/opt/hdf5/lib:/opt/netcdf-fortran/lib:/opt/io_libs/lib${LD_LIBRARY_PATH}
 ENV LIBRARY_PATH=${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/opt/fms/build/libFMS/.libs:${LD_LIBRARY_PATH}
+ENV LIBRARY_PATH=/opt/fms/build/libFMS/.libs:${LIBRARY_PATH}
 ## Add permissions to the CM4
 RUN chmod 777 /opt/CM4/cm4.x
 

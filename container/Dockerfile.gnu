@@ -6,13 +6,16 @@ RUN . /opt/spack/share/spack/setup-env.sh
 ## Make the CM4 directory
 RUN mkdir -p /opt/CM4
 ## Build the CM4 from github
-RUN git clone --recursive https://github.com/NOAA-GFDL/CM4.git -b 2021.02 \
+RUN git clone --recursive https://github.com/NOAA-GFDL/CM4.git -b 2021.03 \
     && cd CM4/exec \ 
     && make gcc=on HDF_INCLUDE=-I/opt/hdf5/include SH=sh CLUBB=off \
     && cp cm4.x /opt/CM4 \
+    && cp -r fms /opt \ 
     && make clean_all
 ## Add the CM4 executable to the path
 ENV PATH=/opt/CM4/:${PATH}
+ENV LD_LIBRARY_PATH=/opt/fms/build/libFMS/.libs:${LD_LIBRARY_PATH}
+ENV LIBRARY_PATH=/opt/fms/build/libFMS/.libs:${LIBRARY_PATH}
 ## Add permissions to the CM4
 RUN chmod 777 /opt/CM4/cm4.x
 
