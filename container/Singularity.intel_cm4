@@ -1,5 +1,5 @@
 Bootstrap: localimage
-From: intel_netcdf_ubuntu.sif
+From: intel2021.2_netcdfc4.7.4_ubuntu.sif
 Stage: build
 ## Singularity def file used to create CM4
 
