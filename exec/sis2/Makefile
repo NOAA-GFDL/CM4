@@ -3,7 +3,7 @@
 
 CPPDEFS = -DINTERNAL_FILE_NML -g 
 
-OTHERFLAGS = -I$(BUILDROOT)icebergs -I$(BUILDROOT)mom6 -I$(BUILDROOT)fms
+OTHERFLAGS = -I$(BUILDROOT)icebergs -I$(BUILDROOT)mom6 -I$(BUILDROOT)fms/build/.mods -I$(SRCROOT)FMS/include
 
 include $(MK_TEMPLATE)
 
